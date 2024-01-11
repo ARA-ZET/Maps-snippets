@@ -1,0 +1,42 @@
+ LocationService() {
+    location.changeSettings(
+        accuracy: LocationAccuracy.navigation, interval: 4000);
+    location.enableBackgroundMode(enable: true);
+    location.changeNotificationOptions(
+        iconName: "@mipmap/ic_launcher",
+        title: "Location service is running in background",
+        channelName: "arazet",
+        description: "arazet is currently running",
+        onTapBringToFront: true);
+
+    location.requestPermission().then((granted) => {
+          if (granted == granted)
+            {
+              location.onLocationChanged.listen(
+                (locationData) => [
+                  _locationController.add(
+                    UserLocation(
+                      locationData.latitude.toString(),
+                      locationData.longitude.toString(),
+                      locationData.altitude.toString(),
+                      locationData.speed.toString(),
+                      DateTime.fromMillisecondsSinceEpoch(
+                              locationData.time!.toInt())
+                          .toString(),
+                      locationData.accuracy!.toStringAsFixed(1),
+                    ),
+                  ),
+                  _currentLocation = Wpt(
+                    lat: locationData.latitude,
+                    lon: locationData.longitude,
+                    time: DateTime.fromMillisecondsSinceEpoch(
+                        locationData.time!.toInt()),
+                  ),
+                  gpsState(),
+                ],
+              )
+            }
+        });
+
+    notifyListeners();
+  }
